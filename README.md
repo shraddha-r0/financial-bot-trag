@@ -33,6 +33,67 @@ Easily add new monthly CSVs, clean them, and analyze them through the same strea
 ## 🛠️ Tech Stack
 
 ### Backend
+
+- **Database**: SQLite for fast, lightweight tabular storage
+- **AI/ML**: 
+  - LLM (OpenAI or similar) for:
+    - Schema understanding
+    - SQL generation
+    - Semantic category mapping
+    - Natural language response generation
+
+## 🧹 Data Cleaning
+
+Before analysis, use the `clean_expense_data.py` script to process raw Toshl export files:
+
+### Features
+
+- Converts date formats consistently
+- Handles currency formatting (removes thousands separators)
+- Standardizes column names
+- Adds useful derived fields (day of week)
+- Handles missing values appropriately
+- Outputs cleaned CSV with standardized naming
+
+### Usage
+
+```bash
+# Basic usage (saves to data/clean/toshl_<month><year>_clean.csv)
+python scripts/clean_expense_data.py --input data/raw/Toshl_export_June_2025.csv
+
+# Specify custom output location
+python scripts/clean_expense_data.py --input data/raw/Toshl_export_June_2025.csv --output data/processed/my_cleaned_data.csv
+
+# Process multiple files
+for file in data/raw/Toshl_export_*.csv; do
+    python scripts/clean_expense_data.py --input "$file"
+done
+```
+
+### Input Format
+
+Expects Toshl export CSV files with these columns (case insensitive):
+
+- Date
+- Account
+- Category
+- Tags
+- Expense amount
+- Income amount
+- Currency
+- In main currency
+- Description
+
+### Output
+
+Cleaned CSV files are saved to `data/clean/` by default with the naming convention:
+`toshl_<month><year>_clean.csv` (e.g., `toshl_june2025_clean.csv`)
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend
 - **Database**: SQLite for fast, lightweight tabular storage
 - **AI/ML**: 
   - LLM (OpenAI or similar) for:
