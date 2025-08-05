@@ -89,6 +89,43 @@ Expects Toshl export CSV files with these columns (case insensitive):
 Cleaned CSV files are saved to `data/clean/` by default with the naming convention:
 `toshl_<month><year>_clean.csv` (e.g., `toshl_june2025_clean.csv`)
 
+## 💾 Database Setup
+
+After cleaning your Toshl export files, use the `build_db.py` script to load the data into an SQLite database for analysis:
+
+### Features
+
+- Creates/updates an SQLite database at `data/clean/finances.db`
+- Separates data into two tables: `expenses` and `incomes`
+- Handles data type conversion automatically
+- Overwrites existing tables with fresh data
+
+### Usage
+
+```bash
+# Basic usage
+python scripts/build_db.py data/clean/toshl_june2025_clean.csv
+
+# Using a full path
+python scripts/build_db.py /path/to/your/cleaned_expenses.csv
+```
+
+### Input Format
+
+Expects a cleaned CSV file with these columns:
+- date
+- category
+- tags
+- expense
+- income
+- amount_clp
+
+### Output
+
+Creates or updates `data/clean/finances.db` with two tables:
+- `expenses`: Contains date, category, tags, expense, amount_clp
+- `incomes`: Contains date, category, tags, income, amount_clp
+
 ---
 
 ## 🛠️ Tech Stack
