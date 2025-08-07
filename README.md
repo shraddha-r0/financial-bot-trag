@@ -14,6 +14,45 @@ No rigid categories. No SQL skills needed. Just chat with your data using natura
 
 ---
 
+## 🛠️ Database Management
+
+### Building and Updating the Database
+
+Build or update the database with a cleaned CSV:
+```bash
+python scripts/build_db.py data/clean/toshl_june2025_clean.csv
+```
+This appends the CSV data into `data/clean/finances.db`, creates/updates the tables (expenses, incomes), and creates/updates the views (meta, v_expenses_monthly, v_incomes_monthly).
+
+### Checking Database Status
+
+Check summary stats:
+```bash
+sqlite3 -header -column data/clean/finances.db "SELECT * FROM meta;"
+```
+
+### Viewing Monthly Rollups
+
+Preview monthly expenses:
+```bash
+sqlite3 -header -column data/clean/finances.db "SELECT * FROM v_expenses_monthly LIMIT 10;"
+```
+
+Preview monthly incomes:
+```bash
+sqlite3 -header -column data/clean/finances.db "SELECT * FROM v_incomes_monthly LIMIT 10;"
+```
+
+### Generating Schema Snapshots
+
+Generate a schema snapshot in JSON format:
+```bash
+python -m scripts.snapshot_schema
+```
+This saves the output to: `data/clean/schema_snapshot.json`
+
+---
+
 ## 🎯 Key Objectives
 
 ### 🧠 Schema-Aware SQL Generation

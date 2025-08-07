@@ -57,5 +57,48 @@ incomes_df.to_sql('incomes', conn, if_exists="append", index=False)
 # Confirm it worked
 print(f"✅ Successfully wrote 'expenses' and 'incomes' to SQLite DB at: {db_path}")
 
+# ----- Meta & helper views (no change to your insert logic) -----
+# Always refresh the views so they're up-to-date
+conn.execute("DROP VIEW IF EXISTS meta;")
+conn.execute("""
+CREATE VIEW meta AS
+SELECT
+  -- Expenses summary
+  (SELECT MIN(date) FROM expenses) AS expenses_min_date,
+  (SELECT MAX(date) FROM expenses) AS expenses_max_date,
+  (SELECT COUNT(*) FROM expenses)  AS expenses_row_count,
+  
+  -- Incomes summary
+  (SELECT MIN(date) FROM incomes)  AS incomes_min_date,
+  (SELECT MAX(date) FROM incomes)  AS incomes_max_date,
+  (SELECT COUNT(*) FROM incomes)   AS incomes_row_count
+;
+""")
+
+conn.execute("DROP VIEW IF EXISTS v_expenses_monthly;")
+conn.execute("""
+CREATE VIEW v_expenses_monthly AS
+SELECT
+  strftime('%Y-%m', date)         AS month,
+  COALESCE(category, '')          AS category,
+  SUM(amount_clp)                  AS total_amount_clp,
+FROM expenses
+GROUP BY month, category
+ORDER BY month DESC, total_amount_clp DESC;
+""")
+
+conn.execute("DROP VIEW IF EXISTS v_incomes_monthly;")
+conn.execute("""
+CREATE VIEW v_incomes_monthly AS
+SELECT
+  strftime('%Y-%m', date)         AS month,
+  COALESCE(category, '')          AS category,
+  SUM(amount_clp)                  AS total_amount_clp,
+FROM incomes
+GROUP BY month, category
+ORDER BY month DESC, total_amount_clp DESC;
+""")
+# ---------------------------------------------------------------
+
 # Close connection
 conn.close()
