@@ -2,38 +2,90 @@
 
 ## 📚 Project Vision
 
-Financial Bot is an AI-powered financial assistant that leverages Tabular RAG (Retrieval-Augmented Generation) to help you analyze your monthly expense data—intelligently, semantically, and conversationally.
+Financial Bot is an AI-powered financial assistant that leverages Tabular RAG (Retrieval-Augmented Generation) to help you analyze your financial data through natural language. It transforms expense and income data into actionable insights with simple, conversational queries.
 
-### Key Features
+### ✨ Key Features
 
-- **Natural Language Queries**: Ask questions like:
-  - "How much did I spend on takeout last month?"
-  - "What categories spiked compared to June?"
-  - "Show me spending related to leisure or self-care."
-- **No SQL Required**: Chat with your data using natural language
+- **Natural Language to SQL**: Convert plain English questions into SQL queries
+- **Interactive Web Interface**: Beautiful Streamlit UI for easy interaction
+- **CLI Support**: Full functionality through command-line interface
 - **Schema-Aware**: Automatically understands your database structure
-- **Semantic Understanding**: Maps natural language to relevant data categories
+- **Query Logging**: Tracks all queries for analysis and improvement
+- **Result Summarization**: Get concise, natural language summaries of your data
 
-## 🚀 Quick Start
+## 🏗️ Project Structure
 
-### 1. Prepare Your Data
+```
+financial-bot-trag/
+├── app/                    # Core application modules
+│   ├── db.py              # Database connection and query execution
+│   ├── executor.py        # SQL execution and result handling
+│   ├── logger.py          # Query logging functionality
+│   ├── packager.py        # Result packaging and formatting
+│   ├── prompts.py         # AI prompt templates
+│   ├── sqlgen.py          # Natural language to SQL generation
+│   ├── sqlguard.py        # SQL query validation
+│   └── summarizer.py      # Result summarization
+├── data/
+│   ├── clean/             # Processed/cleaned data files
+│   └── raw/               # Raw input data files
+├── logs/                  # Query logs
+├── scripts/               # Utility scripts
+│   ├── ask.py            # CLI interface for asking questions
+│   ├── build_db.py       # Database initialization
+│   ├── clean_expense_data.py  # Data cleaning script
+│   └── snapshot_schema.py # Generate schema snapshots
+├── ui/
+│   └── streamlit_app.py  # Web interface
+└── requirements.txt      # Python dependencies
+```
 
-1. **Add Raw Data**: Place your Toshl export files in `data/raw/`
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.9+
+- SQLite 3
+- [Hugging Face API Token](https://huggingface.co/settings/tokens) (for LLM access)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/financial-bot-trag.git
+   cd financial-bot-trag
    ```
-   financial-bot-trag/
-   └── data/
-       └── raw/
-           ├── Toshl_export_June_2025.csv
-           └── Toshl_export_July_2025.csv
+
+2. **Set up a virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-2. **Clean the Data**:
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Set up environment variables**
+   Create a `.env` file in the project root:
+   ```env
+   HF_TOKEN=your_huggingface_token_here
+   HF_MODEL=meta-llama/Meta-Llama-3-8B-Instruct  # Or your preferred model
+   ```
+
+### Data Preparation
+
+1. **Add your financial data**
+   Place your export files (CSV) in the `data/raw/` directory.
+
+2. **Clean the data**
    ```bash
    # Process a single file
-   python scripts/clean_expense_data.py --input data/raw/Toshl_export_June_2025.csv
+   python scripts/clean_expense_data.py --input data/raw/your_export.csv
    
-   # Process multiple files
-   for file in data/raw/Toshl_export_*.csv; do
+   # Or process multiple files
+   for file in data/raw/*.csv; do
        python scripts/clean_expense_data.py --input "$file"
    done
    ```
@@ -46,52 +98,70 @@ Financial Bot is an AI-powered financial assistant that leverages Tabular RAG (R
    python scripts/build_db.py data/clean/toshl_june2025_clean.csv
    ```
    This creates/updates tables (expenses, incomes) and views (meta, v_expenses_monthly, v_incomes_monthly).
-
-2. **Verify the import**:
+2. **Generate schema snapshot** (for AI context)
    ```bash
-   sqlite3 -header -column data/clean/finances.db "SELECT * FROM meta;"
+   python -m scripts.snapshot_schema
    ```
 
-### 3. Generate Schema Snapshot (for AI context)
+## 💻 Usage
+
+### Web Interface
 
 ```bash
-python -m scripts.snapshot_schema
+streamlit run ui/streamlit_app.py
 ```
 This creates `data/clean/schema_snapshot.json` which helps the AI understand your database structure.
 
-### 4. Start Querying
+### Command Line Interface
 
-Ask questions about your finances:
 ```bash
-python scripts/run_sqlgen.py "How much did I spend on groceries last month?"
+# Basic usage
+python scripts/ask.py "How much did I spend on groceries last month?"
+
+# With custom database path
+python scripts/ask.py --db path/to/your/database.db "Show my top 5 expense categories"
+
+# Verbose output with preview rows
+python scripts/ask.py --verbose "What were my largest expenses last quarter?"
 ```
 
-## 📋 Data Formats
+## 🔍 Example Queries
 
-### Input Files
-Toshl export CSV files should include these columns (case insensitive):
-- Date, Account, Category, Tags
-- Expense amount, Income amount
-- Currency, In main currency
-- Description
-
-### Database Schema
-- **expenses**: date, category, tags, expense, amount_clp, description
-- **incomes**: date, category, tags, income, amount_clp, description
+- "Show me my total spending last month"
+- "What were my top 5 expense categories last quarter?"
+- "Compare my food expenses between June and July"
+- "What's my current monthly savings rate?"
+- "Show me all transactions over $100 in the last 3 months"
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python with SQLite
-- **AI/ML**: OpenAI LLM for natural language understanding and SQL generation
-- **Data Processing**: Automated cleaning and transformation pipelines
+- **Backend**: Python 3.9+
+- **Database**: SQLite 3
+- **Web Interface**: Streamlit
+- **AI/ML**: Hugging Face Transformers
+- **Data Processing**: Pandas, NumPy
+- **Logging**: CSV-based query logging
 
-## 💭 Why This Project?
+## 🔮 Future Improvements
 
-Most expense tracking tools only categorize transactions but don't understand natural language queries. This system bridges that gap by:
-- Understanding nuanced financial questions
-- Mapping natural language to your actual spending data
-- Providing meaningful insights without requiring technical knowledge
-- Giving you control over your financial narrative through simple conversation
+### 1. Hybrid Search with Semantic Search
 
-## 📝 License
-*(License information will be added here)*
+- **Vector Embeddings**: Store embeddings of transaction descriptions for semantic search
+- **Hybrid Queries**: Combine traditional SQL with semantic similarity search
+- **Fuzzy Matching**: Better handling of typos and variations in category/tag names
+
+### 2. Budget Rules Engine
+
+- **Custom Rules**: Define budget rules in natural language
+- **Alerts**: Get notified when spending exceeds budget
+- **Projections**: Forecast future spending based on patterns
+
+### 3. Enhanced Analytics
+
+- **Time Series Analysis**: Identify spending trends over time
+- **Anomaly Detection**: Flag unusual transactions
+- **Category Insights**: Automated insights about spending patterns
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue to discuss your ideas or submit a pull request.
