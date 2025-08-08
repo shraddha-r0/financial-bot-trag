@@ -13,7 +13,6 @@ SCHEMA = {
             {"name": "date", "type": "DATE"},
             {"name": "category", "type": "TEXT"},
             {"name": "tags", "type": "TEXT"},
-            {"name": "expense", "type": "REAL"},
             {"name": "amount_clp", "type": "REAL"},
             {"name": "description", "type": "TEXT"},
             {"name": "day", "type": "TEXT"}
@@ -24,7 +23,6 @@ SCHEMA = {
             {"name": "date", "type": "DATE"},
             {"name": "category", "type": "TEXT"},
             {"name": "tags", "type": "TEXT"},
-            {"name": "income", "type": "REAL"},
             {"name": "amount_clp", "type": "REAL"},
             {"name": "description", "type": "TEXT"},
             {"name": "day", "type": "TEXT"}
