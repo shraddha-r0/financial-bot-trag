@@ -4,6 +4,7 @@ from app.sqlgen import generate_sql
 from app.executor import run_sql
 from app.packager import package_result
 from app.summarizer import summarize_result
+from app.logger import log_sql_call
 
 def main():
     parser = argparse.ArgumentParser(description="Ask a natural language question about your finances.")
@@ -24,6 +25,11 @@ def main():
     # Summarize
     summary = summarize_result(args.question, sql, packaged)
 
+    # Log
+    row_count = len(exec_res["rows"]) if exec_res["rows"] else 0
+    sample = exec_res["rows"][ :3] if exec_res["rows"] else []
+    log_sql_call(args.question, sql, row_count, sample)
+    
     # Output
     print("\n=== Answer ===")
     print(summary)

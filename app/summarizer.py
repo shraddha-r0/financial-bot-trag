@@ -9,6 +9,8 @@ client = OpenAI(
     api_key=os.environ["HF_TOKEN"],
 )
 
+HF_MODEL = os.environ["HF_MODEL"]
+
 SUMMARY_PROMPT = """\
 You are a financial assistant. Summarize the given query result in 1–2 sentences.
 - Use only the numbers and data provided.
@@ -17,7 +19,7 @@ You are a financial assistant. Summarize the given query result in 1–2 sentenc
 - Do not hallucinate data.
 """
 
-def summarize_result(nl_question: str, sql: str, packaged_result: dict, model: str = "openai/gpt-oss-20b") -> str:
+def summarize_result(nl_question: str, sql: str, packaged_result: dict, model: str = HF_MODEL) -> str:
     """
     Summarize the result package into a short, human-readable answer.
     """

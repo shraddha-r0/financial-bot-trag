@@ -1,0 +1,10 @@
+timestamp,question,sql,row_count,sample_rows
+2025-08-07T21:18:19.104872-04:00,How much did I spend on books last month? Show me each expense,"SELECT date, description, amount_clp FROM expenses
+WHERE (category LIKE '%book%' OR tags LIKE '%book%' OR description LIKE '%book%')
+  AND date >= date('now', 'start of month', '-1 month')
+  AND date < date('now', 'start of month')
+UNION ALL
+SELECT 'Total', '', SUM(amount_clp) FROM expenses
+WHERE (category LIKE '%book%' OR tags LIKE '%book%' OR description LIKE '%book%')
+  AND date >= date('now', 'start of month', '-1 month')
+  AND date < date('now', 'start of month')",3,"[{'date': '2025-07-04', 'description': 'Kindle ebook', 'amount_clp': 2018.0}, {'date': '2025-07-22', 'description': 'Stationery', 'amount_clp': 8160.0}, {'date': 'Total', 'description': '', 'amount_clp': 10178.0}]"
