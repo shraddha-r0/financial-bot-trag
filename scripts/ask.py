@@ -1,4 +1,10 @@
 import sys
+from pathlib import Path
+
+# Add the project root to the Python path
+project_root = str(Path(__file__).parent.parent)
+if project_root not in sys.path:
+    sys.path.append(project_root)
 import argparse
 from app.sqlgen import generate_sql
 from app.executor import run_sql
@@ -18,7 +24,7 @@ def main():
     
     # Execute
     exec_res = run_sql(sql, db_path=args.db)
-    
+    print(exec_res)
     # Package
     packaged = package_result(exec_res)
     
