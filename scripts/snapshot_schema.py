@@ -7,9 +7,25 @@ and sample data. This snapshot is used by the financial bot to understand the da
 structure when generating SQL queries from natural language questions.
 """
 import json
+import re
 import sqlite3
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union, TypedDict
+
+# Simple SQLite identifier quoter
+def quote_identifier(identifier: str) -> str:
+    """Quote an SQLite identifier (table or column name) to prevent SQL injection.
+    
+    Args:
+        identifier: The identifier to quote
+        
+    Returns:
+        The properly quoted identifier
+    """
+    # Remove any existing quotes
+    identifier = identifier.strip('`"[]')
+    # Add double quotes around the identifier
+    return f'"{identifier}"'
 
 # Define type hints for better code clarity
 class ColumnDef(TypedDict):
@@ -72,8 +88,8 @@ def get_sample_rows(table: str, limit: int = 5) -> List[Dict[str, Any]]:
             # Configure connection to return rows as dictionaries
             conn.row_factory = sqlite3.Row
             
-            # Use parameterized query to prevent SQL injection
-            query = f"SELECT * FROM {sqlite3.quote_identifier(table)} LIMIT ?"
+            # Use safe identifier quoting to prevent SQL injection
+            query = f"SELECT * FROM {quote_identifier(table)} LIMIT ?"
             cur = conn.execute(query, (limit,))
             
             # Convert rows to dictionaries for JSON serialization

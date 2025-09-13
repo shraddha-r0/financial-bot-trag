@@ -81,7 +81,7 @@ CREATE VIEW v_expenses_monthly AS
 SELECT
   strftime('%Y-%m', date)         AS month,
   COALESCE(category, '')          AS category,
-  SUM(amount_clp)                  AS total_amount_clp,
+  SUM(amount_clp)                  AS total_amount_clp
 FROM expenses
 GROUP BY month, category
 ORDER BY month DESC, total_amount_clp DESC;
@@ -93,7 +93,7 @@ CREATE VIEW v_incomes_monthly AS
 SELECT
   strftime('%Y-%m', date)         AS month,
   COALESCE(category, '')          AS category,
-  SUM(amount_clp)                  AS total_amount_clp,
+  SUM(amount_clp)                  AS total_amount_clp
 FROM incomes
 GROUP BY month, category
 ORDER BY month DESC, total_amount_clp DESC;

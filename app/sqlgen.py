@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from app.sqlguard import sanitize_sql, apply_limit_policy
+from app.prompts import build_user_prompt, SYSTEM_SQL_PROMPT
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
